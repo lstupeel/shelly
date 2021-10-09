@@ -59,7 +59,9 @@ class ShellyMain:
             regFile.close()
         self.readReg()
                 
-
+    def executeScript(self, target):
+        pass
+    
     def waitForCommand(self):
         comLine = input(self.usrReg["username"] + "@~>")
         self.executeCommand(comLine.split(" "))
