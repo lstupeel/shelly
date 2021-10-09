@@ -1,6 +1,1 @@
-{
-    "com" : {
-        "exit" : "shCom.exit(self)",
-        "addreg" : "ShellyMain.addReg(self, comLine[1], comLine[2], comLine[3])"
-    }
-}
+{"com": {"exit": "shCom.exit(self)", "addreg": "ShellyMain.addReg(self, comLine[1], comLine[2], comLine[3])"}, "usr": {"username": "test"}, "sys": {"include": ["packages.shLib"]}}

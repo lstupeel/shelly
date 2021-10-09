@@ -1,7 +1,10 @@
-from packages.shLIb import *
 import json
+
 class ShellyMain:
     comReg = None
+    usrReg = None
+    sysReg = None
+
     def initialize(self):
         print("                 _____ _          _ _       \n" +
               "                /  ___| |        | | |      \n" +
@@ -12,48 +15,61 @@ class ShellyMain:
               "                          testing ver. __/ |\n" +
               "                                      |___/ ")
         self.readReg()
-        print(self.comReg)
+        self.initLibs()
+
         while True:
             self.waitForCommand()
+
+    def initLibs(self):
+        libs = self.sysReg["include"]
+        for lib in libs:
+            exec(f"from {lib} import *")
 
     def readReg(self):
         with open("./packages/shReg.json", "r") as regFile:
             regData = json.load(regFile)
             self.comReg = regData["com"]
+            self.usrReg = regData["usr"]
+            self.sysReg = regData["sys"]
 
     def addReg(self, reg , dest, data):
-        with open("./packages/shReg.json", "r+") as regFile:
-            regData = json.load(regFile)
-            if dest in regData[reg]:
-                i = None
-                while i != "yes" or "y" or "n" or "no" or "":
-                    print(dest, "in registry", reg, "equals", regData["reg"]["dest"])
-                    i = input("Do you want to rewrite it?(y or n):")
-                if i == "yes" or "y" or "":
-                    regData[reg][dest] = data
-                    print(regData)
-                    json.dump(regData, regFile)
-                    regFile.close()
-                elif i == "n" or "no":
-                    pass
-            else:
+        regFile = open("./packages/shReg.json", "r")
+        regData = json.load(regFile)
+        if dest in regData[reg]:
+            i = None
+
+            while i not in ["y", "n", "no", "yes", ""]:
+                print(dest, "in registry", reg, "equals", regData[reg][dest])
+                i = input("Do you want to rewrite it?(y or n):")
+
+            if i == "yes" or "y" or "":
                 regData[reg][dest] = data
-                print(regData)
+                regFile.close()
+                regFile = open("./packages/shReg.json", "w")
                 json.dump(regData, regFile)
                 regFile.close()
 
+            elif i == "n" or "no":
+                pass
+        else:
+            regData[reg][dest] = data
+            regFile.close()
+            regFile = open("./packages/shReg.json", "w")
+            json.dump(regData, regFile)
+            regFile.close()
+        self.readReg()
+                
+
     def waitForCommand(self):
-        comLine = input("~>")
+        comLine = input(self.usrReg["username"] + "@~>")
         self.executeCommand(comLine.split(" "))
         pass
 
     def executeCommand(self, comLine):
         if comLine[0] in self.comReg:
             eval(self.comReg[comLine[0]])
-            # ShellyMain.addReg(self, comLine[1], comLine[2], comLine[3]) ЭТА ХУЙНЯ НИЧЕГО НЕ ДЕЛАЕТ!!! КОММЕНТАРИЙ НЕ УБИРАТЬ.
         else:
-            print(comLine[0],  ":is wrong command")
-
+            print(comLine[0],  ":is wrong command") 
 
 if __name__ == '__main__':
     shell = ShellyMain()
